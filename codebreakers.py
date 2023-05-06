@@ -92,7 +92,7 @@ def run():
                     print(f"答えは： {solution}")
                     losses += 1
                     print(f"あなたは　{wins}回勝ち、{losses}回負けた")
-                    try_again = input("もう一度やってみますか。")
+                    try_again = input("もう一度やってみますか。 [y]はい [なんでも]修了: ")
                     if try_again.lower() == 'y':
                         init(reset_wins_losses=False)
                         continue
@@ -104,7 +104,7 @@ def run():
                 print(f"答えは： {solution} でした！")
                 wins += 1
                 print(f"あなたは　{wins}回勝ち、{losses}回負けた")
-                try_again = input("もう一度やってみますか。")
+                try_again = input("もう一度やってみますか。 [y]はい [なんでも]修了: ")
                 if try_again.lower() == 'y':
                     init(reset_wins_losses=False)
                     continue
