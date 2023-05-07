@@ -1,14 +1,13 @@
 import random
 from collections import Counter
 
-class Hand():
+
+class Hand:
     def __init__(self):
         self.cards = []
         self.bank = 500
         self.bet = 0
-        self.pay_out = [-self.bet, self.bet, self.bet * 2, self.bet * 3, self.bet * 6, self.bet * 36,
-                        self.bet * (36 * 36), self.bet * (36 * 36) * (36 * 36)]
-
+        self.pay_out = None
 
     def deal(self):
         for i in range(1, 6):
@@ -17,54 +16,51 @@ class Hand():
     def redraw(self, index):
         self.cards[index] = random.randrange(1, 11)
 
+    def update_bet(self, bet_amount):
+        self.bet = bet_amount
+        self.pay_out = [-self.bet, 0, self.bet, self.bet * 2, self.bet * 3, self.bet * 9,
+                        self.bet * 81, self.bet * (81 * 81)]
 
-    def check_hand(self):
-        card_counts = Counter(self.cards)
+    def check_hand(self, hand):
+        hand = self.cards
+        card_counts = Counter(hand)
 
         if 5 in card_counts.values():
             return "5x"
-
-        if 4 in card_counts.values():
+        elif 4 in card_counts.values():
             return "4x"
-
-        if set(card_counts.values()) == {2, 3}:
+        elif set(card_counts.values()) == {2, 3}:
             return "FS"
-
-        if len(set(self.cards)) == 5 and (max(self.cards) - min(self.cards) == 4):
+        elif len(set(hand)) == 5 and (max(hand) - min(hand) == 4):
             return "S"
-
-        if 3 in card_counts.values():
+        elif 3 in card_counts.values():
             return "3x"
-
-        if list(card_counts.values()).count(2) == 4:
+        elif list(card_counts.values()).count(2) == 2:
             return "2x"
-
-        if 2 in card_counts.values():
+        elif 2 in card_counts.values():
             return "1x"
 
         return "You Lose!"
 
-
     def payout(self):
-        self.check_hand()
-        if self.check_hand() == "You Lose!":
+        if self.check_hand(self.cards) == "You Lose!":
             self.bank += self.pay_out[0]
-        elif self.check_hand() == "1x":
+        elif self.check_hand(self.cards) == "1x":
             self.bank += self.pay_out[1]
-        elif self.check_hand() == "2x":
-            self.bank += self.pay_out[2]
-        elif self.check_hand() == "3x":
+        elif self.check_hand(self.cards) == "2x":
+            self.bank += self.bet
+        elif self.check_hand(self.cards) == "3x":
             self.bank += self.pay_out[3]
-        elif self.check_hand() == "S":
+        elif self.check_hand(self.cards) == "S":
             self.bank += self.pay_out[4]
-        elif self.check_hand() == "FS":
+        elif self.check_hand(self.cards) == "FS":
             self.bank += self.pay_out[5]
-        elif self.check_hand() == "4x":
+        elif self.check_hand(self.cards) == "4x":
             self.bank += self.pay_out[6]
-        elif self.check_hand() == "5x":
+        elif self.check_hand(self.cards) == "5x":
             self.bank += self.pay_out[7]
 
-        if self.check_hand() == "You Lose!":
+        if self.check_hand(self.cards) == "You Lose!":
             print("You lost the hand!")
             print(f"{self.bet} has been taken from your bank.")
         else:
@@ -73,6 +69,7 @@ class Hand():
 
 
 player = Hand()
+
 
 def run():
     while True:
@@ -85,8 +82,7 @@ def run():
             print("Cannot place that bet. Try again.")
             continue
         else:
-            player.bet = int(bet)
-            print(player.bet)
+            player.update_bet(int(bet))
             player.deal()
             print(player.cards)
             draw_1 = input("Draw new card 1? [y]es or [any] for no: ")
